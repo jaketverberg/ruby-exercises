@@ -25,12 +25,12 @@ end
 
 def float_division(a, b)
   # return the result of dividing a by b as a float, rather than an integer
-  a.is_f / b.is_f
+  a.to_f / b.to_f
 end
 
 def string_to_number(string)
   # return the result of converting a string into an integer
-  string.is_i
+  string.to_i
 end
 
 def even?(number)
