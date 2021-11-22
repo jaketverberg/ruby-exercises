@@ -14,7 +14,7 @@ end
 def favorite_number(favorite_list)
   # return the value of the number key or 42 if the key is not found
   hash = {favorite_list}
-  
+
   if hash[:number].empty?
     hash[42]
   else
@@ -24,6 +24,8 @@ end
 
 def update_favorite_movie(favorite_list, movie)
   # Step 1: add/update the key of movie (as a symbol)
+  hash = {favorite_list}
+  hash[:movie] = movie
 
   # Step 2: return the hash (because Step 1 returns the value of the movie key)
   favorite_list
