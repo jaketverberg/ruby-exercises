@@ -7,10 +7,19 @@ end
 
 def favorite_color(favorite_list)
   # return the value of the color key
+  hash = {favorite_list}
+  hash[:color]
 end
 
 def favorite_number(favorite_list)
   # return the value of the number key or 42 if the key is not found
+  hash = {favorite_list}
+  
+  if hash[:number].empty?
+    hash[42]
+  else
+    hash[:number]
+  end
 end
 
 def update_favorite_movie(favorite_list, movie)
