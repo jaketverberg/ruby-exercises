@@ -15,7 +15,7 @@ def favorite_number(favorite_list)
   if favorite_list.key?(:number)
     favorite_list[:number]
   else
-    favorite_list[42]
+    42
   end
 end
 
