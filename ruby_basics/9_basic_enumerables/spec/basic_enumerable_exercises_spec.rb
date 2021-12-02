@@ -63,7 +63,7 @@ RSpec.describe 'Basic Enumerable Exercises' do
       expect(find_low_inventory(fruit)).to eq(result)
     end
 
-    xit 'returns a hash with floating point number values' do
+    it 'returns a hash with floating point number values' do
       cakes = { chocolate_cake: 2.5, vanilla_cake: 4.25, carrot_cake: 3.75 }
       result = { chocolate_cake: 2.5, carrot_cake: 3.75 }
       expect(find_low_inventory(cakes)).to eq(result)
