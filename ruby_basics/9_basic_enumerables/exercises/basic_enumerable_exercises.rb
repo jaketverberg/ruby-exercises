@@ -8,7 +8,7 @@ def display_guess_order(guesses)
   # use #each_with_index to iterate through each item of the guesses (an array)
   # use puts to output each list item "Guess #<number> is <item>" to console
   # hint: the number should start with 1
-  guesses.each_with_index {|number, item| puts "Guess ##{number} is #{item + 1}"}
+  guesses.each_with_index {|guess, item| puts "Guess ##{item + 1} is #{guess}"}
 end
 
 def find_absolute_values(numbers)
