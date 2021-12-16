@@ -15,20 +15,20 @@ module TicTacToe
         end
     end
 
-    class Game 
+    class Game
         attr_reader :players, :board, :current_player, :ot
 
         def initialize(players, board = Board.new)
             @players = players
             @board = board
-            @current_player, @other_player = players.shuffle 
+            @current_player, @other_player = players.shuffle
         end
 
-        def switch_players 
+        def switch_players
             @current_player, @other_player = @other_player, @current_player
         end
 
-        def solicit_move 
+        def solicit_move
             "#{current_player.name}: Enter a number between 1 and 9 to make your move"
         end
 
@@ -40,30 +40,30 @@ module TicTacToe
 
         def human_move_to_corrdinate(human_move)
             mapping = {
-                "1" => [0, 0]
-                "2" => [1, 0]
-                "3" => [2, 0]
-                "4" => [0, 1]
-                "5" => [1, 1]
-                "6" => [2, 1]
-                "7" => [0, 2]
-                "8" => [1, 2]
-                "9" => [2, 2]
+                "1" => [0, 0],
+                "2" => [1, 0],
+                "3" => [2, 0],
+                "4" => [0, 1],
+                "5" => [1, 1],
+                "6" => [2, 1],
+                "7" => [0, 2],
+                "8" => [1, 2],
+                "9" => [2, 2],
             }
             mapping[human_move]
         end
 
-        def game_over_message  
+        def game_over_message
             return "#{current_player.name} won!" if board.game_over == :winner
             return "The game ended in a tie" if board.game_over == :draw
         end
 
-        def play 
+        def play
             puts "#{current_player.name} has randomly been selected as the first player"
-            while true  
-                board.formatted_grid 
+            while true
+                board.formatted_grid
                 puts ""
-                puts solicit_move 
+                puts solicit_move
                 x, y = get_move
                 board.set_cell(x, y, current_player.color)
                 if board.game_over
