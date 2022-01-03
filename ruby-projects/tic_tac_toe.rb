@@ -1,154 +1,117 @@
 module TicTacToe
+    WINNING_POSITIONS = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]]
 
-    class Cell
-        attr_accessor :value
-        def initialize(value = "")
-            @value = value
+    class Game
+      def initialize(player_1, player_2)
+        @board = Array.new(10)
+
+        puts "This TicTacToe Game requires 2 players"
+        puts "What is the first players name?"
+        player_name_1 = gets.chomp
+        puts "What is the second players name?"
+        player_name_2 = gets.chomp
+
+
+        @current_player_id = 0
+        @players = [player_1.new(self, "X", player_name_1), player_2.new(self, "O", player_name_2)]
+
+        puts "#{current_player.name} goes first."
+      end
+      attr_reader :board, :current_player_id
+
+      def play
+        loop do
+          place_player_marker(current_player)
+
+          if player_has_won?(current_player)
+            puts "#{current_player.name} wins! Good work!"
+            print_board
+            return
+          elsif board_full?
+            puts "Draw! Way to defend your positions."
+            print_board
+            return
+          end
+
+          switch_players!
         end
+      end
+
+      def free_positions
+        (1..9).select { |position| @board[position].nil? }
+      end
+
+      def place_player_marker(player)
+          position = player.select_position!
+          puts "#{player.name} selects #{player.marker} position #{position}"
+          @board[position] = player.marker
+      end
+
+      def player_has_won?(player)
+        WINNING_POSITIONS.any? do |line|
+          line.all? { |position| @board[position] == player.marker }
+        end
+      end
+
+      def board_full?
+        free_positions.empty?
+      end
+
+      def other_player_id
+        1 - @current_player_id
+      end
+
+      def switch_players!
+        @current_player_id = other_player_id
+      end
+
+      def current_player
+        @players[current_player_id]
+      end
+
+      def opponent
+        @players[other_player_id]
+      end
+
+      def turn_num
+        10 - free_positions.size
+      end
+
+      def print_board
+        col_separator = ' | '
+        row_separator = '--+---+--'
+
+        label_for_position = lambda{ |position| @board[position] ? @board[position] : position }
+
+        row_for_display = lambda{ |row| row.map(&label_for_position).join(col_separator) }
+        row_positions = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        rows_for_display = row_positions.map(&row_for_display)
+        puts rows_for_display.join("\n" + row_separator + "\n")
+      end
     end
 
     class Player
-        attr_reader :color, :name
-        def initialize(input)
-            @color = input.fetch(:color)
-            @name = input.fetch(:name)
+      def initialize(game, marker, name)
+        @game = game
+        @marker = marker
+        @name = name
+      end
+
+      def select_position!
+        @game.print_board
+        loop do
+          print "#{name} - select your #{marker} position: "
+          selection = gets.to_i
+          return selection if @game.free_positions.include?(selection)
+          puts "Position #{selection} is already taken. Try again."
         end
+      end
+
+      attr_reader :marker
+      attr_reader :name
     end
+  end
 
-    class Game
-        attr_reader :players, :board, :current_player, :ot
+  include TicTacToe
 
-        def initialize(players, board = Board.new)
-            @players = players
-            @board = board
-            @current_player, @other_player = players.shuffle
-        end
-
-        def switch_players
-            @current_player, @other_player = @other_player, @current_player
-        end
-
-        def solicit_move
-            "#{current_player.name}: Enter a number between 1 and 9 to make your move"
-        end
-
-        def get_move(human_move = gets.chomp)
-            human_move_to_coordinate(human_move)
-        end
-
-        private
-
-        def human_move_to_corrdinate(human_move)
-            mapping = {
-                "1" => [0, 0],
-                "2" => [1, 0],
-                "3" => [2, 0],
-                "4" => [0, 1],
-                "5" => [1, 1],
-                "6" => [2, 1],
-                "7" => [0, 2],
-                "8" => [1, 2],
-                "9" => [2, 2],
-            }
-            mapping[human_move]
-        end
-
-        def game_over_message
-            return "#{current_player.name} won!" if board.game_over == :winner
-            return "The game ended in a tie" if board.game_over == :draw
-        end
-
-        def play
-            puts "#{current_player.name} has randomly been selected as the first player"
-            while true
-                board.formatted_grid
-                puts ""
-                puts solicit_move
-                x, y = get_move
-                board.set_cell(x, y, current_player.color)
-                if board.game_over
-                    puts game_over_message
-                    board.formatted_grid
-                    return
-                else
-                    switch_players
-                end
-            end
-        end
-    end
-
-    class Board
-        attr_reader :grid
-        def initialize(input = {})
-            @grid = input.fetch(:grid, default_grid)
-        end
-
-        private
-
-        def default_grid
-            Array.new(3) { Array.new(3) { Cell.new } }
-        end
-
-        def get_cell(x, y)
-            grid[y][x]
-        end
-
-        def set_cell(x, y, value)
-            get_cell(x, y).value = value
-        end
-
-        def game_over
-            return :winner if winner?
-            return :draw if draw?
-            false
-        end
-
-        def draw?
-            grid.flatten.map { |cell| cell.value }.none_empty?
-        end
-
-        def winning_positions
-            grid + 3
-            grid.transpose + 3
-            diagonals
-        end
-
-        def diagonals
-            [
-                [get_cell(0, 0), get_cell(1, 1), get_cell(2, 2)],
-                [get_cell(0, 2), get_cell(1, 1), get_cell(2, 0)]
-            ]
-        end
-
-        def winner?
-            winning_positions.each do |winning_position|
-                next if winning_position_values(winning_position).all_empty?
-                return true if winning_position_values(winning_position).all_same?
-            end
-            false
-        end
-
-        def winning_position_values(winning_position)
-            winning_position.map { |vall| cell.value }
-        end
-    end
-
-    class Array
-        def all_empty?
-            self.all? { |element| element.to_s.empty? }
-        end
-
-        def all_same?
-            self.all? { |element| element == self[0] }
-        end
-
-        def any_empty?
-            self.any? { |element| element.to_s.empty? }
-        end
-
-        def none_empty?
-            !any_empty?
-        end
-    end
-
-end
+  Game.new(Player, Player).play
