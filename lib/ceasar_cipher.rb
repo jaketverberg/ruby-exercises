@@ -1,7 +1,7 @@
 def ceasar_cipher(string, number)
   ascii_answer = string.bytes.map do |num|
-    
-    case 
+
+    case
       #when num = a space or a punctuation mark
       when /[[:blank:]]/.match?(num.chr) || /[[:punct:]]/.match?(num.chr)
         num
@@ -25,5 +25,5 @@ def ceasar_cipher(string, number)
     end #end case expression
   end #end #map sequence
 
- ascii_answer.pack('c*')
+ puts ascii_answer.pack('c*')
 end #ceasar_cipher
